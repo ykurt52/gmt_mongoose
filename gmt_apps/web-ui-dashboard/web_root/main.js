@@ -315,7 +315,8 @@ function FirmwareUpdate({}) {
             title=${`Upload new ${selectedFileType} .bin file`} 
             onupload=${onupload}
             url="api/firmware/upload" 
-            accept=".bin,.uf2,.hex" 
+            accept=".bin,.uf2,.hex"
+            selectedFileType=${selectedFileType}
           />
           
           <div class="grow"><//>
@@ -326,44 +327,6 @@ function FirmwareUpdate({}) {
     <//>
 
     <div class="m-4 gap-4 grid grid-cols-1 lg:grid-cols-2">
-      <div class="bg-white border shadow-lg">
-        <${DeveloperNote}>
-          <div class="my-2">
-            Firmware status and other information is stored in the last sector
-            of flash
-          <//>
-          <div class="my-2">
-            Firmware status can be FIRST_BOOT, UNCOMMITTED or COMMITTED. If no
-            information is available, it is UNAVAILABLE.
-          <//>
-          <div class="my-2">  
-            This GUI loads a firmware file and sends it chunk by chunk to the
-            device, passing current chunk offset, total firmware size and a file name:
-            api/firmware/upload?offset=X&total=Y&name=Z
-          <//>
-        <//>
-      <//>
-
-      <div class="bg-white border shadow-lg">
-        <${DeveloperNote}>
-          <div>
-            Firmware update mechanism defines 3 API functions that the target
-            device must implement: mg_ota_begin(), mg_ota_write() and mg_ota_end()
-          <//>
-          <div class="my-2">  
-            RESTful API handlers use ota_xxx() API to save firmware to flash.
-            The last 0-length chunk triggers ota_end() which performs firmware
-            update using saved firmware image
-          <//>
-          <div class="my-2">  
-            <a class="link text-blue-600 underline" 
-              href="https://mongoose.ws/webinars/">Join our free webinar</a> to
-            get detailed explanations about possible firmware updates strategies
-            and implementation demo
-          <//>
-        <//>
-      <//>
-
     <//>
   `;
 };
