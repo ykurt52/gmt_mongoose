@@ -211,7 +211,7 @@ function FirmwareStatus({title, info, children}) {
 
 function Communication({}) {
   const [info, setInfo] = useState([{}, {}]);
-  const [selectedFileType, setSelectedFileType] = useState("bootloader");
+  const [selectedFileType, setSelectedFileType] = useState("boot");
 
   const refresh = () => fetch('api/firmware/status')
     .then(r => r.json())
@@ -251,7 +251,8 @@ function Communication({}) {
 
 function FirmwareUpdate({}) {
   const [info, setInfo] = useState([{}, {}]);
-  const [selectedFileType, setSelectedFileType] = useState("bootloader");
+  const [selectedFileType, setSelectedFileType] = useState("boot");
+	const [selectedFileDest, setSelectedFileDest] = useState("dest");
 
   const refresh = () => fetch('api/firmware/status')
     .then(r => r.json())
@@ -302,10 +303,26 @@ function FirmwareUpdate({}) {
             </div>
             <div class="col" style="width: 50%;">
               <select id="fileType" class="border p-2 rounded" style="width: 100%;" onChange=${e => setSelectedFileType(e.target.value)}>
-                <option value="bootloader">Bootloader</option>
-                <option value="firmware">Firmware</option>
+                <option value="boot">Bootloader</option>
+                <option value="core">Firmware</option>
                 <option value="app1">Application 1</option>
                 <option value="app2">Application 2</option>
+              </select>
+            </div>
+          </div>
+
+					<div class="row" style="display: flex; align-items: center;">
+            <!-- Dropdown List -->
+            <div class="col" style="width: 50%;">
+              <label for="fileDest" class="text-gray-700 font-semibold" style="width: 100%;">File Dest:</label>
+            </div>
+            <div class="col" style="width: 50%;">
+              <select id="fileDest" class="border p-2 rounded" style="width: 100%;" onChange=${e => setSelectedFileDest(e.target.value)}>
+                <option value="img0">/dev/img0</option>
+                <option value="img1">/dev/img1</option>
+                <option value="ota0">/dev/ota0</option>
+                <option value="ota1">/dev/ota1</option>
+								<option value="ota2">/dev/ota2</option>
               </select>
             </div>
           </div>
@@ -317,6 +334,7 @@ function FirmwareUpdate({}) {
             url="api/firmware/upload" 
             accept=".bin,.uf2,.hex"
             selectedFileType=${selectedFileType}
+						selectedFileDest=${selectedFileDest}
           />
           
           <div class="grow"><//>
@@ -395,7 +413,7 @@ const App = function({}) {
   useEffect(() => fetch('api/login').then(login), []);
 
   if (loading) return '';  // Show blank page on initial load
-  if (user) return html`<${Login} loginFn=${login} logoIcon=${Logo} // if (!user)
+  if (!user) return html`<${Login} loginFn=${login} logoIcon=${Logo}
     title="Device Dashboard Login" 
     tipText="To login, use: admin/admin, user1/user1, user2/user2" />`; // If not logged in, show login screen
 

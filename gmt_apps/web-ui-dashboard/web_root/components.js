@@ -113,9 +113,6 @@ export function Login({loginFn, logoIcon, title, tipText}) {
   const onsubmit = function(ev) {
     const authhdr = 'Basic ' + btoa(user + ':' + pass);
     const headers = {Authorization: authhdr};
-    alert("Authorization: " + authhdr + "\n" +
-          "User: " + user + "\n" +
-          "Pass: " + pass);
     return fetch('api/login', {headers}).then(loginFn).finally(r => setPass(''));
   };
   return html`
@@ -295,7 +292,7 @@ export function UploadFileButton(props) {
   const input = useRef(null);
 
   // Send a large file chunk by chunk
-  const sendFileData = function(url, fileName, fileData, chunkSize, fileType) {
+  const sendFileData = function(url, fileName, fileData, chunkSize, fileType, fileDest) {
     return new Promise(function(resolve, reject) {
       const finish = ok => {
         setUpload(null);
@@ -311,8 +308,9 @@ export function UploadFileButton(props) {
         var opts = {method: 'POST', body: chunk};
         var fullUrl = url + '?offset=' + offset +
           '&total=' + fileData.length  +
-          '&name=' + encodeURIComponent(fileName) +
-          '&fileType=' + encodeURIComponent(fileType);  // Add fileType to the URL
+          '&name='  + encodeURIComponent(fileName) +
+          '&type='  + encodeURIComponent(fileType) +  	// Add file type to the URL
+		  '&dest='  + encodeURIComponent(fileDest); 	// Add file dest to the URL
         var ok;
         setStatus('Uploading ' + fileName + ', bytes ' + offset + '..' +
           (offset + chunk.length) + ' of ' + fileData.length);
@@ -339,7 +337,7 @@ export function UploadFileButton(props) {
     r.readAsArrayBuffer(f);
     r.onload = function() {
       // Pass selectedFileType to sendFileData function
-      setUpload(sendFileData(props.url, f.name, new Uint8Array(r.result), 2048, props.selectedFileType));
+      setUpload(sendFileData(props.url, f.name, new Uint8Array(r.result), 2048, props.selectedFileType, props.selectedFileDest));
       ev.target.value = '';
       ev.preventDefault();
       btn && btn.current.base.click();
